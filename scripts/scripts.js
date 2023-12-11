@@ -3,7 +3,7 @@ const availableProducts = [
         name: "Beef Bulgogi",
         price: "$12.99",
         size: "16 Oz",
-        category: "Entrées & Sides",
+        category: "Entrées &amp; Sides",
         image: "assets/tj-beef-bulgogi.png"
     },
     {
@@ -28,7 +28,7 @@ const availableProducts = [
         image: "assets/tj-cinnamon-coffee-cake.png"
     },
     {
-        name: "Cold Brew Coffee & Boba Coconut Non-Dairy Dessert",
+        name: "Cold Brew Coffee &amp; Boba Coconut Non-Dairy Dessert",
         price: "$3.49",
         size: "16 Fl Oz",
         category: "Cool Desserts",
@@ -49,7 +49,7 @@ const availableProducts = [
         image: "assets/tj-pizza-crisps.png"
     },
     {
-        name: "Roasted Garlic & Pesto Pizza with Deep Fried Crust",
+        name: "Roasted Garlic &amp; Pesto Pizza with Deep Fried Crust",
         price: "$5.99",
         size: "14.1 Oz",
         category: "Entrées & Sides",
@@ -59,7 +59,7 @@ const availableProducts = [
         name: "Sesame Miso Salad with Salmon",
         price: "$6.99",
         size: "10.25 Oz",
-        category: "Salads, Soups & Sides",
+        category: "Salads, Soups &amp; Sides",
         image: "assets/tj-salmon-salad.png"
     },
     {
@@ -73,19 +73,31 @@ const availableProducts = [
         name: "Sweet Potato Fries",
         price: "$2.49",
         size: "15 Oz",
-        category: "Entrées & Sides",
+        category: "Entrées &amp; Sides",
         image: "assets/tj-sweet-potato-fries.png"
     },
     {
         name: "Turkey Burgers",
         price: "$3.79",
         size: "16 Oz",
-        category: "Entrées & Sides",
+        category: "Entrées &amp; Sides",
         image: "assets/tj-turkey-burgers.png"
     }
 ];
 
-function addAvailableProducts (products){
+function loadShoppingListFromStorage() {
+    const storedShoppingList = localStorage.getItem("myShoppingList");
+    if (storedShoppingList) {
+      myShoppingList = JSON.parse(storedShoppingList);
+      loadShoppingList(myShoppingList);
+    }
+}
+
+function saveShoppingListToStorage() {
+    localStorage.setItem("myShoppingList", JSON.stringify(myShoppingList));
+}
+
+function addAvailableProducts(products) {
     const productsContainer = document.getElementById("products");
 
     products.forEach(product => {
@@ -103,7 +115,7 @@ function addAvailableProducts (products){
                 <div class="single-product-cat-title"> <div class="single-product-category">
                     ${productCategory}
                 </div>
-                <div class="single-product-title">
+                <div id="product-name" class="single-product-title">
                     ${productName}
                 </div>
                 </div>
@@ -125,8 +137,38 @@ function addAvailableProducts (products){
             </div>
             </div>`
         );
-        
+
     });
 }
 
-addAvailableProducts(availableProducts);
+let myShoppingList = JSON.parse(localStorage.getItem("myShoppingList")) || [];
+
+function addToShoppingList() {
+    let addButton = document.querySelectorAll(".single-product-add button");
+    addButton.forEach((button) => {
+        button.addEventListener("click", () => {
+            console.log("add to list");
+            let productName = button.parentNode.parentNode.parentNode.childNodes[1].childNodes[3].innerHTML.trim();
+            console.log(productName);
+
+            let alreadyAdded = myShoppingList.some((product) => product.name === productName);
+
+            if (!alreadyAdded) {
+                let foundProduct = availableProducts.find((product) => product.name === productName);
+                myShoppingList.push(foundProduct);
+                saveShoppingListToStorage();
+                console.log(myShoppingList);
+            } else {
+                //
+            }
+        });
+    });
+}
+
+if (window.location.pathname === '/index.html') {
+    addAvailableProducts(availableProducts);
+
+} else {
+    //other tasks    
+}
+addToShoppingList();
